@@ -1,0 +1,80 @@
+# revenue over different periods
+int_rev = 0
+int_profit = 0
+int_unique = 0
+int_lbs = 0
+for (i in 1:14){
+  int_rev = int_rev + financial_df$Revenue[i]
+  int_profit = int_profit + financial_df$Profit[i]
+  int_unique = int_unique + weekly_visits_df$`Unique Visits`[i]
+  int_lbs = int_lbs + financial_df$`Lbs. Sold`[i]
+}
+print(int_rev)
+print(int_profit)
+print(int_unique)
+print(int_lbs)
+
+
+pre_rev = 0
+pre_profit = 0
+pre_unique = 0
+pre_lbs = 0
+for (i in 15:35){
+  pre_rev = pre_rev + financial_df$Revenue[i]
+  pre_profit = pre_profit + financial_df$Profit[i]
+  pre_unique = pre_unique + weekly_visits_df$`Unique Visits`[i]
+  pre_lbs = pre_lbs + financial_df$`Lbs. Sold`[i]
+  
+}
+print(pre_rev)
+print(pre_profit)
+print(pre_unique)
+print(pre_lbs)
+
+pro_rev = 0
+pro_profit = 0
+pro_unique = 0
+pro_lbs = 0
+for (i in 36:52){
+  pro_rev = pro_rev + financial_df$Revenue[i]
+  pro_profit = pro_profit + financial_df$Profit[i]
+  pro_unique = pro_unique + weekly_visits_df[i]
+  pro_lbs = pro_lbs + financial_df$`Lbs. Sold`[i]
+}
+print(pro_rev)
+print(pro_profit)
+print(pre_unique)
+print(pro_lbs)
+
+
+post_rev = 0
+post_profit = 0
+post_unique = 0
+post_lbs = 0
+for (i in 53:66){
+  post_rev = post_rev + financial_df$Revenue[i]
+  post_profit = post_profit + financial_df$Profit[i]
+  post_unique = post_unique + weekly_visits_df$`Unique Visits`[i]
+  post_lbs = post_lbs + financial_df$`Lbs. Sold`[i]
+}
+print(post_rev)
+print(post_profit)
+print(post_unique)
+print(post_lbs)
+
+#make a list of the intial, pre, promo and post totals for each
+lst_rev <- c(int_rev,pre_rev,pro_rev,post_rev)
+lst_unique <- c(int_unique, pre_unique, pro_unique, post_unique)
+lst_lbs <- c(int_lbs, pre_lbs, pro_lbs, post_lbs)
+
+#for pie carts
+pie(lst, labels = names(lst) <- c('Int','Pre','Promo','Post'))
+
+#barplot for Total Revenue across the different periods
+barplot(lst_rev, xlab = names(lst) <- c('Int','Pre','Promo','Post'))
+
+#barplot for for Total Unique Visits across the different periods
+barplot(lst_unique, xlab = names(lst) <- c('Int','Pre','Promo','Post'))
+
+#barplot for for Total Lbs. sold across the different periods
+barplot(lst_lbs, xlab = names(lst) <- c('Int','Pre','Promo','Post'))
