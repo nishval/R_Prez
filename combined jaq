@@ -1,0 +1,88 @@
+library(readxl)
+
+#importing the different sheets in Web Analytics Case Student 
+#importing Sheet: Weekly Visits and checking for null variables
+weekly_visits_df <- read_xls("Web Analytics Case Student Spreadsheet.xls", 
+                       sheet = "Weekly Visits", range = "A5:H71")
+View(weekly_visits_df)
+
+summary(weekly_visits_df)
+
+#importing Sheet: Financial and checking for null variables
+financial_df <- read_xls("Web Analytics Case Student Spreadsheet.xls", 
+                          sheet = "Financials", range = 'A5:E71')
+View(financial_df)
+summary(financial_df)
+
+#importing Sheet: Lbs. Sold and checking for null variables
+lbs_df <- read_xls("Web Analytics Case Student Spreadsheet.xls", 
+                    sheet = "Lbs. Sold", range = "A5:B295")
+View(lbs_df)
+summary(lbs_df)
+
+#importing Sheet: Daily Visits and checking for null variables
+daily_visits_df <- read_xls("Web Analytics Case Student Spreadsheet.xls", 
+                             sheet = "Daily Visits", range = "A5:B467")
+View(daily_visits_df)
+summary(daily_visits_df) 
+
+#importing Sheet: Demographics and checking for null variables
+demographic_df <- read_xls("Web Analytics Case Student Spreadsheet.xls", 
+                     sheet = "Demographics", range = "B6:C78")
+View(demographic_df)
+summary(demographic_df)
+
+stats <- function(x){
+  mean <- mean(x)
+  median <- median(x)
+  std_dev <- sd(x)
+  max <- max(x)
+  min <- min(x)
+  lst = c(mean, median, std_dev, max, min)
+  return(lst)
+}
+
+#Question 5 and 6
+#call ggplot2 for visualisation
+library(ggplot2)
+
+#Linear relationship between revenue and Lbs. Sold 
+#as well as Revenue and Visits and their correlation
+scatter_corr <- function(x,Revenue){
+  
+  #Relationship between x and y
+  plot(x, Revenue)
+  abline(lm(Revenue ~ x))
+  
+  #Correlation between x and y
+  corr <- cor(x,Revenue)
+  print(corr)
+}
+
+#call the scatter_corr function
+scatter_corr(financial_df$`Lbs. Sold`, financial_df$Revenue)
+scatter_corr(weekly_visits_df$Visits, financial_df$Revenue)
+scatter_corr(weekly_visits_df$Visits, financial_df$`Lbs. Sold`)
+scatter_corr(weekly_visits_df$`Unique Visits`, financial_df$Revenue)
+scatter_corr(weekly_visits_df$`Unique Visits`, financial_df$`Lbs. Sold`)
+scatter_corr(financial_df$Profit, financial_df$Revenue)
+#install GGally to show the correlation matrix of Financials
+install.packages('GGally')
+library(GGally)
+
+#visual correlation in Financials
+#With focus on Revenue and Lbs. Sold
+ggcorr(financial_df)
+
+
+#summary values for Lbs. Sold Worksheet
+summary(lbs_df)
+
+
+#Question 8a,b,c
+#Histogram for Lbs. Sold
+boxplot(lbs_df$`Lbs. Sold`, horizontal = TRUE)
+hist(lbs_df$`Lbs. Sold`, col = 'gray')
+
+####Answer: Although the histogram appears to be bellshaped
+#it is not symmetrical. Implying it has outliers to the right
