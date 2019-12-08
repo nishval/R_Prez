@@ -1,0 +1,77 @@
+---
+title: "Auto MPG"
+author: "Nishval Patel"
+date: "4th December 2019"
+output: html_document
+---
+
+```{r data, echo=FALSE}
+### Just change your working directory ###
+auto_mpg <- read.csv("auto_mpg.csv")
+auto_mpg <- as.data.frame(auto_mpg)
+
+auto_mpg$orogin <- (gsub(2, '0', auto_mpg$orogin))
+auto_mpg$orogin <- (gsub(3, '0', auto_mpg$orogin))
+auto_mpg$orogin <- as.numeric(auto_mpg$orogin)
+auto_mpg$cylinders <- as.numeric(auto_mpg$cylinders)
+auto_mpg$horsepower <- as.numeric(auto_mpg$horsepower)
+auto_mpg$model_year <- as.numeric(auto_mpg$model_year)
+```
+
+## Insight from tree
+
+The main split is displacement. Cylinders are not considered in the tree.
+
+```{r tree, echo=FALSE}
+library(rpart)
+library(rpart.plot)
+
+auto_tree <- rpart(orogin~ horsepower+cylinders+displacement+acceleration, data=auto_mpg, method="class")
+rpart.plot(auto_tree)
+```
+
+## Insight from Logistic Model
+
+Cylinder is a significant variable in the model. With every 1 unit increase in cylinder, the odds of success, car being from USA decrease by approx 70%
+
+```{r logit, echo=FALSE}
+auto_logit <- glm(orogin ~ horsepower+cylinders+displacement+acceleration, data=auto_mpg, family="binomial")
+summary(auto_logit)
+```
+
+## Performance Comparision
+
+Red is the tree and Black is the Logistic Model.
+
+The tree is the better fit as it has more area under the curve.
+
+```{r perf, echo=FALSE, message=FALSE}
+library(ROCR)
+predict_auto_logit <- predict(auto_logit,auto_mpg,type="response")
+predict_auto_tree <- predict(auto_tree,auto_mpg,type="prob")
+
+pred_auto_tree <- prediction(predict_auto_tree[,2], auto_mpg$orogin)
+pred_auto_logit <- prediction(predict_auto_logit,auto_mpg$orogin)
+
+perf_auto_tree <- performance(pred_auto_tree, "tpr", "fpr")
+perf_auto_logit <- performance(pred_auto_logit, "tpr","fpr")
+
+plot(perf_auto_tree, col="red")
+plot(perf_auto_logit, col="black", add=TRUE)
+```
+
+## AUC
+
+The area under the curve :
+Logistic : 94.2%
+Tree : 97.8%
+
+```{r auc, echo=FALSE}
+auc_tree <- performance(pred_auto_tree, measure = 'auc')
+auc_tree <- auc_tree@y.values[[1]]
+auc_tree
+
+auc_logit <- performance(pred_auto_logit, measure = 'auc')
+auc_logit <- auc_logit@y.values[[1]]
+auc_logit
+```
